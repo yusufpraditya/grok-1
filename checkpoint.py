@@ -46,7 +46,7 @@ def copy_to_tmp(file: str):
         yield file
         return
 
-    tmp_dir = "/var/tmp/"
+    tmp_dir = "/tmp/"
     fd, tmp_path = tempfile.mkstemp(dir=tmp_dir)
     try:
         shutil.copyfile(file, tmp_path)
@@ -58,7 +58,7 @@ def copy_to_tmp(file: str):
 
 @contextlib.contextmanager
 def copy_from_tmp(file: str):
-    tmp_dir = "/var/tmp/"
+    tmp_dir = "/tmp/"
     fd, tmp_path = tempfile.mkstemp(dir=tmp_dir)
     try:
         yield tmp_path
