@@ -40,13 +40,13 @@ sys.modules['__main__'].QuantizedWeight8bit = QuantizedWeight8bit
 
 
 @contextlib.contextmanager
-def copy_to_shm(file: str):
-    if file.startswith("/dev/shm/"):
+def copy_to_tmp(file: str):
+    if file.startswith("/tmp/"):
         # Nothing to do, the file is already in shared memory.
         yield file
         return
 
-    tmp_dir = "/dev/shm/"
+    tmp_dir = "/tmp/"
     fd, tmp_path = tempfile.mkstemp(dir=tmp_dir)
     try:
         shutil.copyfile(file, tmp_path)
@@ -57,8 +57,8 @@ def copy_to_shm(file: str):
 
 
 @contextlib.contextmanager
-def copy_from_shm(file: str):
-    tmp_dir = "/dev/shm/"
+def copy_from_tmp(file: str):
+    tmp_dir = "/tmp/"
     fd, tmp_path = tempfile.mkstemp(dir=tmp_dir)
     try:
         yield tmp_path
@@ -69,13 +69,13 @@ def copy_from_shm(file: str):
 
 
 def fast_unpickle(path: str) -> Any:
-    with copy_to_shm(path) as tmp_path:
+    with copy_to_tmp(path) as tmp_path:
         with open(tmp_path, "rb") as f:
             return pickle.load(f)
 
 
 def fast_pickle(obj: Any, path: str) -> None:
-    with copy_from_shm(path) as tmp_path:
+    with copy_from_tmp(path) as tmp_path:
         with open(tmp_path, "wb") as f:
             pickle.dump(obj, f)
 
